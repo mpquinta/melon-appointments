@@ -10,6 +10,7 @@ class User(db.Model):
 
     __tablename__ = "users"
 
+    user_id = db.Column(db.Integer, autoincrement=True, primary_key=True)
     username = db.Column(db.String, nullable=False, unique=True)
 
     def __repr__(self):
@@ -20,7 +21,9 @@ class Appointment(db.Model):
 
     __tablename__ = "appointments"
 
-    scheduled_date = db.Column(db.Datetime)
+    appt_id = db.Column(db.Integer, autoincrement=True, primary_key=True)
+    scheduled_date = db.Column(db.DateTime)
+    user_id = db.Column(db.Integer, db.ForeignKey("users.user_id"))
     user = db.relationship("User", backref="appointments")
 
     def __repr__(self):
