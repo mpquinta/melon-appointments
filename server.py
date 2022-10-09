@@ -18,11 +18,14 @@ def homepage():
     
     return render_template("homepage.html")
 
-@app.route("/login")
+@app.route("/login", methods=["POST"])
 def login():
     """Verifies if user already has an account with the website"""
 
+    username = request.form.get("username")
     # call crud operation to verify if the username is in the table
+    if crud.username_already_exists(username):
+        session["signed_in_user"] = user_id
     # if not, add it to the database
     # add current user_id to session
 
