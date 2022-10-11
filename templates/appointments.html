@@ -14,12 +14,16 @@
         <br>
 
         <label for="start-time">Start time:</label>
-        <input type="time" name="start-time" id="start-time">
+        <select id="start-time">
+            {% for i in range(1, 13) %}
+                <option value="{{i}}">{{i}}</option>
+            {% endfor %}
+        </select>
 
         <br>
 
         <label for="end-time">End time:</label>
-        <input type="time" name="end-time" id="end-time">
+        <input type="time" value="08:00:00" step="1800" name="end-time" id="end-time">
 
         <br>
 
