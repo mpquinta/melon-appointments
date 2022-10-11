@@ -1,0 +1,31 @@
+{% extends 'base.html' %}
+
+{% block title %}Appointments{% endblock %}
+
+{% block head %}
+    
+{% endblock %}
+
+{% block body %}
+    <form>
+        <label for="date">Enter the date of the reservation you would like:</label>
+        <input type="date" name="date" id="date">
+
+        <br>
+
+        <label for="start-time">Start time:</label>
+        <input type="time" name="start-time" id="start-time">
+
+        <br>
+
+        <label for="end-time">End time:</label>
+        <input type="time" name="end-time" id="end-time">
+
+        <br>
+
+        <button type="submit" id="search-btn">Search</button>
+
+    </form>
+
+    <div id="search-results"></div>
+{% endblock %}

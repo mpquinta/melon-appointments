@@ -34,23 +34,25 @@ def login():
         db.session.commit()
         session["signed_in_user"] = new_user.user_id
     # add current user_id to session
-    return redirect("/")
+    return render_template("appointments.html")
 
 
 @app.route("/logout")
 def logout():
-     """Logs a user out"""
+    """Logs a user out"""
 
     # delete session 
-    
-     pass
+    del session["signed_in_user"]
+
+    return redirect("/")
+     
 
 @app.route("/search-appts")
 def search_appts():
     """Displays a page where users can select a date and time to see available appointmets"""
 
     # return render_template for HTML page with form
-    pass
+    return render_template("appointments.html")
 
 @app.route("/results")
 def results():
@@ -59,7 +61,9 @@ def results():
     # crud operation that returns all times that are not saved in the db already
     # make sure appointment times are 30 minutes long
 
-    pass
+    requested_date = request.args.get("date")
+    requested_start_time = request.args.get("start-time")
+    requested_end_time = request.args.get("end-time")
 
 @app.route("/save-appt", methods=["POST"])
 def save_appt():
