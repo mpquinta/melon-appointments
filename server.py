@@ -24,12 +24,18 @@ def login():
 
     username = request.form.get("username")
     # call crud operation to verify if the username is in the table
-    if crud.username_already_exists(username):
-        session["signed_in_user"] = user_id
+    user_validation = crud.username_already_exists(username)
+    if user_validation:
+        session["signed_in_user"] = user_validation.user_id
     # if not, add it to the database
+    else:
+        new_user = crud.create_user(username)
+        db.session.add(new_user)
+        db.session.commit()
+        session["signed_in_user"] = new_user.user_id
     # add current user_id to session
+    return redirect("/")
 
-    pass
 
 @app.route("/logout")
 def logout():

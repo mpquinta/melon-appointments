@@ -9,6 +9,7 @@ def create_user(username):
     return new_user
 
 def username_already_exists(username):
-    if User.query.filter_by(username=username).all():
-        return True
+    user = User.query.filter_by(username=username).first()
+    if user:
+        return user
     return False
