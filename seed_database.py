@@ -1,7 +1,7 @@
 """Script to seed database"""
 
 import os
-from datetime import datetime
+import datetime
 
 import model
 import crud
@@ -21,3 +21,17 @@ for i in range(5):
 
 model.db.session.add_all(users_in_db)
 model.db.session.commit()
+
+appointments_in_db = []
+for i in range(1, 6):
+    new_appt = crud.create_appt(
+                user_id=i, 
+                scheduled_date=datetime.datetime.now().date().strftime("%m/%d/%Y"), 
+                start_time=datetime.datetime.now().time().strftime("%I:%M%p"),
+                end_time=(datetime.datetime.now() + datetime.timedelta(minutes=30)).time().strftime("%I:%M%p")
+    )
+
+    appointments_in_db.append(new_appt)
+model.db.session.add_all(appointments_in_db)
+model.db.session.commit()
+

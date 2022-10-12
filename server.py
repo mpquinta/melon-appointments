@@ -34,7 +34,7 @@ def login():
         db.session.commit()
         session["signed_in_user"] = new_user.user_id
     # add current user_id to session
-    return render_template("appointments.html")
+    return redirect("/search-appts")
 
 
 @app.route("/logout")
@@ -62,8 +62,18 @@ def results():
     # make sure appointment times are 30 minutes long
 
     requested_date = request.args.get("date")
-    requested_start_time = request.args.get("start-time")
-    requested_end_time = request.args.get("end-time")
+    start_time_hour = request.args.get("start-time-hour")
+    start_time_min = request.args.get("start-time-minute")
+    start_time_am_pm = request.args.get("start-am-pm")
+    end_time_hour = request.args.get("end-time-hour")
+    end_time_min = request.args.get("end-time-minute")
+    end_time_am_pm = request.args.get("end-am-pm")
+    start_time = datetime.strptime(start_time_hour + ":" + start_time_min + start_time_am_pm, "%I:%M%p")
+    end_time = datetime.strptime(end_time_hour + ":" + end_time_min + end_time_am_pm, "%I:%M%p")
+
+    print(requested_date, start_time, end_time)
+
+    return None
 
 @app.route("/save-appt", methods=["POST"])
 def save_appt():

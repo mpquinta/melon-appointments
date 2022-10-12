@@ -7,7 +7,7 @@ const searchBtn = document.querySelector("#search-btn");
 function displaySearchResult(evt) {
     evt.preventDefault(); 
 
-    const url = `/results?date=${date}?&start-time=${start-time}&end-time=${end-time}`
+    const url = `/results?date=${date}?&start-time-hour=${start-time-hour}&start-time-minute=${start-time-minute}&start-am-pm=${start-am-pm}&end-time-hour=${end-time-hour}&end-time-minute=${end-time-minute}&end-am-pm=${end-am-pm}`
 
     // make a fetch request to server
     fetch(url)

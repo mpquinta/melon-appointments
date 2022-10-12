@@ -22,12 +22,14 @@ class Appointment(db.Model):
     __tablename__ = "appointments"
 
     appt_id = db.Column(db.Integer, autoincrement=True, primary_key=True)
-    scheduled_date = db.Column(db.DateTime)
+    scheduled_date = db.Column(db.Date)
+    start_time = db.Column(db.Time)
+    end_time = db.Column(db.Time)
     user_id = db.Column(db.Integer, db.ForeignKey("users.user_id"))
     user = db.relationship("User", backref="appointments")
 
     def __repr__(self):
-        return f'<appointment={self.scheduled_date}>'
+        return f'<appointment={self.scheduled_date} | start time={self.start_time} | end time={self.end_time}>'
 
 def connect_to_db(flask_app, db_uri="postgresql:///melon-appts", echo=True):
     flask_app.config["SQLALCHEMY_DATABASE_URI"] = db_uri
