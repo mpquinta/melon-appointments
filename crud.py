@@ -14,8 +14,13 @@ def username_already_exists(username):
         return user
     return False
 
-def get_available_appts(requested_date, start_time, end_time):
-    pass
+def get_unavailable_appts(scheduled_date, start_time, end_time):
+    available_appts = Appointment.query.filter(
+                        Appointment.scheduled_date == scheduled_date,
+                        Appointment.start_time >= start_time,
+                        Appointment.end_time <= end_time
+                    ).all()
+    return available_appts
 
 def create_appt(user_id, scheduled_date, start_time, end_time):
     appt = Appointment(

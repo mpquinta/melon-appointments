@@ -27,8 +27,9 @@ for i in range(1, 6):
     new_appt = crud.create_appt(
                 user_id=i, 
                 scheduled_date=datetime.datetime.now().date().strftime("%m/%d/%Y"), 
-                start_time=datetime.datetime.now().time().strftime("%I:%M%p"),
-                end_time=(datetime.datetime.now() + datetime.timedelta(minutes=30)).time().strftime("%I:%M%p")
+                # start_time=datetime.datetime.now().time().strftime("%I:%M%p"),
+                start_time = datetime.datetime.strptime(f'{i}:00PM', "%I:%M%p").time(),
+                end_time=(datetime.datetime.strptime(f'{i}:00PM', "%I:%M%p") + datetime.timedelta(minutes=30)).time().strftime("%I:%M%p")
     )
 
     appointments_in_db.append(new_appt)

@@ -4,7 +4,7 @@ from flask import (Flask, render_template, request, flash, session, redirect, js
 from model import connect_to_db, db
 import crud
 from jinja2 import StrictUndefined
-from datetime import datetime
+import datetime
 
 # creates a server
 app = Flask(__name__)
@@ -58,7 +58,7 @@ def search_appts():
 def results():
     """Show results from searching available appointments"""
 
-    # crud operation that returns all times that are not saved in the db already
+    
     # make sure appointment times are 30 minutes long
 
     requested_date = request.args.get("date")
@@ -68,12 +68,35 @@ def results():
     end_time_hour = request.args.get("end-time-hour")
     end_time_min = request.args.get("end-time-minute")
     end_time_am_pm = request.args.get("end-am-pm")
-    start_time = datetime.strptime(start_time_hour + ":" + start_time_min + start_time_am_pm, "%I:%M%p")
-    end_time = datetime.strptime(end_time_hour + ":" + end_time_min + end_time_am_pm, "%I:%M%p")
+    start_time = datetime.datetime.strptime((start_time_hour + ":" + start_time_min + start_time_am_pm), "%I:%M%p")
+    end_time = datetime.datetime.strptime(end_time_hour + ":" + end_time_min + end_time_am_pm, "%I:%M%p")
 
-    print(requested_date, start_time, end_time)
+    # edge case end time is earlier than start time
+    
+    # crud operation that returns all times that are not saved in the db already
+    unavail_appts = crud.get_unavailable_appts(requested_date, start_time.time(), end_time.time())
+    available_appts = {}
+    counter = 0
+    current = start_time
+    for appt in unavail_appts:
+        while current < end_time:
+            print("current: ", current, "appt_time: ", appt.start_time)
+            current = current + datetime.timedelta(minutes=30)
+            if current != appt.start_time:
+                
+                available_appts[counter] = current.time()
+                counter += 1
+    # while current < end_time:
+    #     current = current + datetime.timedelta(minutes=30)
+    #     for appt in unavail_appts:
+    #         print(appt)
+    #         if current != appt.start_time:
+    #             available_appts[counter] = current.time()
+    #             counter += 1
+    print("unavailable appts: ", unavail_appts)
+    print("available appts: ", available_appts)
 
-    return None
+    return requested_date
 
 @app.route("/save-appt", methods=["POST"])
 def save_appt():
