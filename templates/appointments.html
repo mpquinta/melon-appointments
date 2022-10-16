@@ -7,7 +7,8 @@
 {% endblock %}
 
 {% block body %}
-    <form action="/results">
+    <!-- <form action="/results"> -->
+    <form>
         <label for="date">Enter the date of the reservation you would like:</label>
         <input type="date" name="date" id="date">
 
@@ -56,4 +57,6 @@
     </form>
 
     <div id="search-results"></div>
+    
+    <script src="/static/appointments.js"></script>
 {% endblock %}

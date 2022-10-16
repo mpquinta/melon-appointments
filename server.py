@@ -59,44 +59,48 @@ def results():
     """Show results from searching available appointments"""
 
     
-    # make sure appointment times are 30 minutes long
-
+    # retrieving information from the form the user filled out
     requested_date = request.args.get("date")
-    start_time_hour = request.args.get("start-time-hour")
-    start_time_min = request.args.get("start-time-minute")
-    start_time_am_pm = request.args.get("start-am-pm")
-    end_time_hour = request.args.get("end-time-hour")
-    end_time_min = request.args.get("end-time-minute")
-    end_time_am_pm = request.args.get("end-am-pm")
+    start_time_hour = request.args.get("start_time_hour")
+    start_time_min = request.args.get("start_time_min")
+    start_time_am_pm = request.args.get("start_time_am_pm")
+    end_time_hour = request.args.get("end_time_hour")
+    end_time_min = request.args.get("end_time_min")
+    end_time_am_pm = request.args.get("end_time_am_pm")
+
+    #converting string time into datetime object
     start_time = datetime.datetime.strptime((start_time_hour + ":" + start_time_min + start_time_am_pm), "%I:%M%p")
     end_time = datetime.datetime.strptime(end_time_hour + ":" + end_time_min + end_time_am_pm, "%I:%M%p")
 
-    # edge case end time is earlier than start time
+    # TODO: edge case end time is earlier than start time
     
-    # crud operation that returns all times that are not saved in the db already
+    # call crud operation that returns all times that are not saved in the db already
     unavail_appts = crud.get_unavailable_appts(requested_date, start_time.time(), end_time.time())
+    # since returns a datetime object, iterate over result and only save start times of saved appointments
+    unavail_start_times = set()
+    for appts in unavail_appts:
+        unavail_start_times.add(appts.start_time)
     available_appts = {}
+    
+    # create a variable that will act as a key for the dictionary so result is ordered when sent back to front end
     counter = 0
     current = start_time
-    for appt in unavail_appts:
-        while current < end_time:
-            print("current: ", current, "appt_time: ", appt.start_time)
-            current = current + datetime.timedelta(minutes=30)
-            if current != appt.start_time:
-                
-                available_appts[counter] = current.time()
-                counter += 1
-    # while current < end_time:
-    #     current = current + datetime.timedelta(minutes=30)
-    #     for appt in unavail_appts:
-    #         print(appt)
-    #         if current != appt.start_time:
-    #             available_appts[counter] = current.time()
-    #             counter += 1
+
+    while current < end_time:
+        if current.time() not in unavail_start_times:
+            available_appts[counter] = {
+                "scheduled_day": requested_date,
+                "appt_start": current.time().strftime("%I:%M%p"),
+                "appt_end": (current + datetime.timedelta(minutes=30)).time().strftime("%I:%M%p")
+            }
+            # available_appts[counter] = current.time().strftime("%I:%M%p")
+            counter += 1
+        current = current + datetime.timedelta(minutes=30)
+
     print("unavailable appts: ", unavail_appts)
     print("available appts: ", available_appts)
 
-    return requested_date
+    return available_appts
 
 @app.route("/save-appt", methods=["POST"])
 def save_appt():
