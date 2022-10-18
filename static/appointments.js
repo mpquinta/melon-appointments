@@ -1,6 +1,16 @@
 'use strict';
 
-// [Getting search results]
+// [Getting search results
+
+// makea function that creates radio selections
+function radioOptions(apptTime) {
+    const radioElement = `
+        <input type="radio" value="test" value="test">
+        <label for="test">Test</label>
+    `
+    return radioElement
+}
+
 // get information from the form - trigger response
 const searchBtn = document.querySelector("#search-btn");
 
@@ -24,9 +34,40 @@ function displaySearchResult(evt) {
     // make a fetch request to server
     fetch(url)
         .then((response) => response.json())
-        .then((data) => {
+        .then((availableAppts) => {
             // call back function should update web page with search results
-            console.log(data)
+            console.log(typeof(availableAppts))
+
+            const apptResultsContainer = document.querySelector("#search-results")
+            apptResultsContainer.innerHTML = "";
+
+            // create divs for the form
+            const apptSelectionForm = document.createElement("form");
+            apptSelectionForm.setAttribute("id", "select-appt-form")
+
+            // make a function that makes a radio button for each available appointment
+            for (const appts in availableAppts) {
+                // console.log(availableAppts[appts])
+
+                const radioElement = document.createElement("input")
+                radioElement.setAttribute("type", "radio")
+                radioElement.setAttribute("id", availableAppts[appts]["appt_start"])
+                radioElement.setAttribute("name", "book-appt")
+                radioElement.setAttribute("value", availableAppts[appts]["appt_start"])                 
+                apptSelectionForm.insertAdjacentElement("beforeend", radioElement)
+
+                const labelForRadioElement = document.createElement("label")
+                labelForRadioElement.setAttribute("for", availableAppts[appts]["appt_start"])
+                labelForRadioElement.innerHTML = `${availableAppts["appt_start"]} - ${availableAppts["appt_end"]}`
+                apptSelectionForm.insertAdjacentElement("beforeend", labelForRadioElement)
+            }
+
+            const formBtn = document.createElement("button");
+            formBtn.setAttribute("type", "submit");
+            formBtn.innerHTML = "Book Appointment";
+            apptSelectionForm.insertAdjacentElement("beforeend", formBtn);
+
+            apptResultsContainer.innerHTML = apptSelectionForm;
         })
 }
 
