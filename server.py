@@ -58,7 +58,6 @@ def search_appts():
 def results():
     """Show results from searching available appointments"""
 
-    
     # retrieving information from the form the user filled out
     requested_date = request.args.get("date")
     start_time_hour = request.args.get("start_time_hour")
@@ -97,8 +96,8 @@ def results():
             counter += 1
         current = current + datetime.timedelta(minutes=30)
 
-    print("unavailable appts: ", unavail_appts)
-    print("available appts: ", available_appts)
+    # print("unavailable appts: ", unavail_appts)
+    # print("available appts: ", available_appts)
 
     return available_appts
 
@@ -107,14 +106,31 @@ def save_appt():
     """User can save appointment"""
 
     # get values from form
+    scheduled_date = crud.convert_datestr_to_datetime(request.form.get("scheduled-date"))
+    start_time = crud.convert_str_to_datetime(request.form.get("book-appt"))
+    
+    # get end_time
+    end_time = crud.add_30_min(start_time)
+
+    print(scheduled_date)
+    print(start_time)
+    print("end time: ", end_time)
+
     # make sure user doesn't already have an appointment for a given day
+    if crud.appt_for_day_exists(scheduled_date, session["signed_in_user"]):
+        flash("You already have an appointment for that day!")
     # if everything checks out, call crud function to create a appointment for given user
-        # how to associate username to user_id?
+    else:
+        new_appt = crud.create_appt(session["signed_in_user"], scheduled_date, start_time, end_time)
+        db.session.add(new_appt)
+        db.session.commit()
+        flash(f"Sucessfully booked your appointment for {crud.convert_date_formatted_str(scheduled_date)} at {crud.convert_time_formatted_str(start_time)} to {end_time}")
+
     # else, display an error message using flash 
     # add to db
     # commit
     
-    pass
+    return redirect("/search-appts")
 
 @app.route("/schedule")
 def schedule():

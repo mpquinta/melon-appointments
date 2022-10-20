@@ -26,8 +26,6 @@ function displaySearchResult(evt) {
     const end_time_min = document.querySelector("#end-time-minute").value;
     const end_time_am_pm = document.querySelector("#end-am-pm").value;
 
-    console.log(start_time_min, start_time_am_pm)
-
     // create URL
     const url = `/results?date=${requestedDate}&start_time_hour=${start_time_hour}&start_time_min=${start_time_min}&start_time_am_pm=${start_time_am_pm}&end_time_hour=${end_time_hour}&end_time_min=${end_time_min}&end_time_am_pm=${end_time_am_pm}`
 
@@ -36,38 +34,55 @@ function displaySearchResult(evt) {
         .then((response) => response.json())
         .then((availableAppts) => {
             // call back function should update web page with search results
-            console.log(typeof(availableAppts))
 
             const apptResultsContainer = document.querySelector("#search-results")
             apptResultsContainer.innerHTML = "";
 
-            // create divs for the form
-            const apptSelectionForm = document.createElement("form");
-            apptSelectionForm.setAttribute("id", "select-appt-form")
-
+            // create the form
+            let apptSelectionForm = document.createElement("form");
+            apptSelectionForm.setAttribute("method", "post")
+            apptSelectionForm.setAttribute("action", "/save-appt")
+            
             // make a function that makes a radio button for each available appointment
             for (const appts in availableAppts) {
-                // console.log(availableAppts[appts])
+                // create line break element
+                const br = document.createElement("br");
 
-                const radioElement = document.createElement("input")
+                let radioElement = document.createElement("input")
                 radioElement.setAttribute("type", "radio")
                 radioElement.setAttribute("id", availableAppts[appts]["appt_start"])
                 radioElement.setAttribute("name", "book-appt")
-                radioElement.setAttribute("value", availableAppts[appts]["appt_start"])                 
-                apptSelectionForm.insertAdjacentElement("beforeend", radioElement)
+                radioElement.setAttribute("value", availableAppts[appts]["appt_start"])
 
-                const labelForRadioElement = document.createElement("label")
+                let endTime = document.createElement("input")
+                endTime.setAttribute("type", "hidden")
+                endTime.setAttribute("name", "end-time")
+                endTime.setAttribute("value", availableAppts[appts]["appt_end"])
+                
+                apptSelectionForm.appendChild(endTime);                 
+                apptSelectionForm.appendChild(radioElement)
+
+                let labelForRadioElement = document.createElement("label")
                 labelForRadioElement.setAttribute("for", availableAppts[appts]["appt_start"])
-                labelForRadioElement.innerHTML = `${availableAppts["appt_start"]} - ${availableAppts["appt_end"]}`
-                apptSelectionForm.insertAdjacentElement("beforeend", labelForRadioElement)
+                labelForRadioElement.innerHTML = ` ${availableAppts[appts]["appt_start"]} - ${availableAppts[appts]["appt_end"]}`
+                apptSelectionForm.appendChild(labelForRadioElement)
+                apptSelectionForm.appendChild(br)
+
+
             }
 
-            const formBtn = document.createElement("button");
+            let scheduledDate = document.createElement("input")
+            scheduledDate.setAttribute("type", "hidden")
+            scheduledDate.setAttribute("name", "scheduled-date")
+            scheduledDate.setAttribute("value", availableAppts[0]["scheduled_day"])
+            apptSelectionForm.appendChild(scheduledDate);
+
+            let formBtn = document.createElement("button");
             formBtn.setAttribute("type", "submit");
             formBtn.innerHTML = "Book Appointment";
-            apptSelectionForm.insertAdjacentElement("beforeend", formBtn);
+            apptSelectionForm.appendChild(formBtn);
 
-            apptResultsContainer.innerHTML = apptSelectionForm;
+            apptResultsContainer.appendChild(apptSelectionForm);
         })
 }
 
