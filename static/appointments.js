@@ -33,10 +33,17 @@ function displaySearchResult(evt) {
     fetch(url)
         .then((response) => response.json())
         .then((availableAppts) => {
+
             // call back function should update web page with search results
 
             const apptResultsContainer = document.querySelector("#search-results")
             apptResultsContainer.innerHTML = "";
+
+            // edge case where there are no available appointments
+            if (Object.keys(availableAppts).length === 0) {
+                apptResultsContainer.innerHTML = "Sorry, there's no available appointments at this time.";
+                return
+            }
 
             // create the form
             let apptSelectionForm = document.createElement("form");

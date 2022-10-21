@@ -1,6 +1,5 @@
 """Server for Melon Tasting Scheduling app"""
 
-from django.shortcuts import render
 from flask import (Flask, render_template, request, flash, session, redirect, jsonify)
 from model import connect_to_db, db
 import crud
@@ -76,10 +75,14 @@ def results():
     
     # call crud operation that returns all times that are not saved in the db already
     unavail_appts = crud.get_unavailable_appts(requested_date, start_time.time(), end_time.time())
+
+
+
     # since returns a datetime object, iterate over result and only save start times of saved appointments
     unavail_start_times = set()
     for appts in unavail_appts:
         unavail_start_times.add(appts.start_time)
+
     available_appts = {}
     
     # create a variable that will act as a key for the dictionary so result is ordered when sent back to front end
@@ -97,6 +100,10 @@ def results():
             counter += 1
         current = current + datetime.timedelta(minutes=30)
 
+    # if there are no available appointments, notify user
+    if available_appts == {}:
+        return {}
+    
     # print("unavailable appts: ", unavail_appts)
     # print("available appts: ", available_appts)
 
