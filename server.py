@@ -1,5 +1,6 @@
 """Server for Melon Tasting Scheduling app"""
 
+from django.shortcuts import render
 from flask import (Flask, render_template, request, flash, session, redirect, jsonify)
 from model import connect_to_db, db
 import crud
@@ -125,21 +126,20 @@ def save_appt():
         db.session.add(new_appt)
         db.session.commit()
         flash(f"Sucessfully booked your appointment for {crud.convert_date_formatted_str(scheduled_date)} at {crud.convert_time_formatted_str(start_time)} to {end_time}")
-
-    # else, display an error message using flash 
-    # add to db
-    # commit
     
     return redirect("/search-appts")
 
-@app.route("/schedule")
+@app.route("/user_appts")
 def schedule():
     """Show all of a user's scheduled appointments"""
 
     # crud function that queries all appointments for a given user_id
+    all_appts = crud.users_appts(session["signed_in_user"])
+
+    
     # return results
 
-    pass
+    return render_template("user_appts.html", all_appts=all_appts)
 
 
 

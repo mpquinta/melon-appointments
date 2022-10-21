@@ -54,4 +54,8 @@ def convert_date_formatted_str(date):
 def convert_time_formatted_str(time):
     return time.strftime("%I:%M%p")
 
+def users_appts(user_id):
+    all_appts = Appointment.query.filter_by(user_id=user_id).all()
+    return all_appts
+
 
